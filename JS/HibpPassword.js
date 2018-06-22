@@ -1,8 +1,12 @@
 var HIBP = HIBP || {};
 
-HIBP.HibpPassword= function() {
+HIBP.HibpPassword= function(callBack) {
     this.url = "https://api.pwnedpasswords.com/range/";
-    this.GetHash = HashPassword;
+    this.CheckCallback = callBack;
+    this.ComputeHash = HIBP.HashPassword;
+    this.GetHash = function (password){
+        this.ComputeHash(password,this.CheckCallback);
+    };
     this.QueryAPI = function(passwordHashPrefix){
         let request = new XMLHttpRequest();
         //TODO call HaveIBeenPwned API
@@ -30,11 +34,14 @@ HIBP.HibpPassword= function() {
     };
 };
 
-HIBP.HashPassword = function(password){
+HIBP.HashPassword = function(password, callBack){
     // We transform the string into an arraybuffer.
-    var buffer = new TextEncoder("utf-8").encode(str);
-    return crypto.subtle.digest("SHA-256", buffer).then(function (hash) {
-        return hex(hash);
+    var buffer = new TextEncoder("utf-8").encode(password);
+    return crypto.subtle.digest("SHA-1", buffer).then(function (hash) {
+        return HIBP.hex(hash);
+    }).then(function(hex)
+    {
+        callBack(hex,password);
     });
 };
 
