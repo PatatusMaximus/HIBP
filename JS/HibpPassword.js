@@ -4,11 +4,15 @@ HIBP.HibpPassword= function(callBack) {
     this.url = "https://api.pwnedpasswords.com/range/";
     this.CheckCallback = callBack;
     this.ComputeHash = HIBP.HashPassword;
-    this.GetHash = function (password){
-        this.ComputeHash(password,this.CheckCallback);
+    this.QueyrAPICallback = function(hash,hashSplit,queryResult){
+
+        let occurrences = this.CountOccurences(queryResult,hashSplit);
+        this.CheckCallback(hash,password,occurrences);
     };
-    this.QueryAPI = function(passwordHashPrefix){
+
+    this.QueryAPI = function(hash){
         let request = new XMLHttpRequest();
+        let hashSplit = SplitHash(hash);
         //TODO call HaveIBeenPwned API
     };
     this.SplitHash = function(passworHash){
@@ -17,11 +21,7 @@ HIBP.HibpPassword= function(callBack) {
             suffix : passworHash.substring(5)
         };
     };
-    this.GetPasswordOccurence = function(password){
-        let passwordHash = GetHash(password);
-        let hashSplit = SplitHash(passwordHash);
-        let apiResult = QueryAPI(hashSplit.prefix);
-
+    this.CountOccurences = function(apiResult,hashSplit){
         for(let i = 0; i < apiResult.length; i++){
             let apiSplit = apiResult[i].split(':');
             if(hashSplit.suffix === apiSplit[0])
@@ -31,6 +31,9 @@ HIBP.HibpPassword= function(callBack) {
         }
 
         return 0;
+    };
+    this.GetPasswordOccurence = function(password){
+        this.ComputeHash(password,this.QueryAPI);
     };
 };
 
