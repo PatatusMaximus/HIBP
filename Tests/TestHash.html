@@ -11,11 +11,10 @@
     <script type="text/javascript" src="../JS/HibpPassword.js" ></script>
     <script type="text/javascript" src="ResultDisplay.js" ></script>
     <script>
-        HIBP.HashPassword("password",(hash,pass)=>{
-            DisplayValue(pass + ' -> ' + hash);
-            
-            let isOk = hash === '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8' ? "OK" : "FAIL";
-            DisplayValue(isOk);
-        });
+        var hash = HIBP.SHA1("password");
+        DisplayValue(hash);
+        
+        let isOk = hash === '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8' ? "OK" : "FAIL";
+        DisplayValue(isOk);
     </script>
 </html>
