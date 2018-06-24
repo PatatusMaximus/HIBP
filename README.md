@@ -5,7 +5,7 @@ Details for the API can be found here : https://haveibeenpwned.com/API/v2#Search
 The API allows to check if a password has been already leaked (wich mean you sould never use it!).
 
 ## How to use
-Simply download **HibpPassword.js** from the **JS** folder and add it to your application.
+Simply download **HibpPassword.js** and add it to your application.
 You can then instanciate an `HIBP.HibpPassword` object with a callback wich will be called after a successfull API call and use `GetPasswordOccurences()` on your object with the a password to test.
 For example :
 ```
