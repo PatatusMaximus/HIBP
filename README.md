@@ -24,10 +24,10 @@ For example :
 ```
 You can check the file **demo.html** for a full demonstration. 
 
-## Licence
-You must comply with HaveIBeenPwned licence https://haveibeenpwned.com/API/v2#License.
+## License
+You must comply with HaveIBeenPwned license https://haveibeenpwned.com/API/v2#License.
 
-By default HibpPassword.js uses [webtoolkit's SHA1 implementation](http://webtoolkit.info/javascript_sha1.html) so you need to comply with their licences or use your own SHA1 function.
+By default HibpPassword.js uses [webtoolkit's SHA1 implementation](http://webtoolkit.info/javascript_sha1.html) so you need to comply with their license or use your own SHA1 function.
 
 For everythin else you are free to use this code the way you want without any restriction as long as you don't take ownership and keep it free.
 
