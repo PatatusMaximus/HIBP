@@ -3,16 +3,17 @@ var HIBP = HIBP || {};
 HIBP.HibpPassword= function(callBack) {
     this.url = "https://api.pwnedpasswords.com/range/";
     this.CheckCallback = callBack;
+    this.RateExceededCallback = function(){};
     this.ComputeHash = HIBP.HashPassword;
-    this.QueryAPICallback = function(hash,hashSplit,queryResult){
+    this.QueryAPICallback = function(hash,hashSplit,apiResult){
 
-        let occurrences = this.CountOccurences(queryResult,hashSplit);
-        this.CheckCallback(hash,password,occurrences);
+        let occurrences = this.CountOccurences(apiResult,hashSplit);
+        this.CheckCallback(hash,occurrences);
     };
     this.SplitHash = function(passworHash){
         return {
-            prefix : passworHash.substring(0,5),
-            suffix : passworHash.substring(5)
+            prefix : passworHash.substring(0,5).toUpperCase(),
+            suffix : passworHash.substring(5).toUpperCase()
         };
     };
     this.QueryAPI = function(hash,password,thisArg){
@@ -20,8 +21,13 @@ HIBP.HibpPassword= function(callBack) {
         let request = new XMLHttpRequest();
         
         request.onreadystatechange = function() { 
-            if (request.readyState == 4 && request.status == 200)
-                thisArg.QueryAPICallback(hash,hashSplit,request.responseText.split("\r\n")).bind(thisArg);
+            if (request.readyState == 4)
+            if(request.status == 200){
+                thisArg.QueryAPICallback(hash,hashSplit,request.responseText.split("\r\n"));
+            } else if(request.status == 429)
+            {
+                thisArg.RateExceededCallback(hash,password,hashSplit,thisArg);
+            }
         };
         request.open("GET", thisArg.url+hashSplit.prefix, true); 
         request.send(null);
@@ -29,15 +35,14 @@ HIBP.HibpPassword= function(callBack) {
     this.CountOccurences = function(apiResult,hashSplit){
         for(let i = 0; i < apiResult.length; i++){
             let apiSplit = apiResult[i].split(':');
-            if(hashSplit.suffix === apiSplit[0])
-            {
+            if(hashSplit.suffix === apiSplit[0]){
                 return apiSplit[1];
             }
         }
 
         return 0;
     };
-    this.GetPasswordOccurence = function(password){
+    this.GetPasswordOccurences = function(password){
         this.ComputeHash(password,this.QueryAPI,this);
     };
 };
@@ -47,8 +52,7 @@ HIBP.HashPassword = function(password, callBack, thisArg){
     var buffer = new TextEncoder("utf-8").encode(password);
     return crypto.subtle.digest("SHA-1", buffer).then(function (hash) {
         return HIBP.hex(hash);
-    }).then(function(hex)
-    {
+    }).then(function(hex){
         callBack(hex,password,thisArg);
     });
 };
