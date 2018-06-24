@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta charset="utf-8" />
-        <title>Test Split method</title>
+        <title>Test ApiCall method</title>
     </head>
     <body>
         <div id="result"></div>
@@ -12,17 +12,13 @@
     <script type="text/javascript" src="ResultDisplay.js" ></script>
     <script>
         let passwordChecker = new HIBP.HibpPassword((hash,pass)=>{});
-
-        let result = passwordChecker.SplitHash("5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8");
-        DisplayValue(result.prefix);
-        
-        let isOk = result.prefix === '5baa6' ? "OK" : "FAIL";
-        DisplayValue(isOk);
-
-        DisplayValue(result.suffix);
-
-        isOk = result.suffix === '1e4c9b93f3f0682250b6cf8331b7ee68fd8' ? "OK" : "FAIL";
-        DisplayValue(isOk);
-
+        passwordChecker.QueryAPICallback = (hash,hashSplit,queryResult) => {
+            DisplayValue("Result for hash starting with " + hashSplit.prefix);
+            for(let i = 0; i < queryResult.length; i++)
+            {
+                DisplayValue(queryResult[i]);
+            }
+        };
+        passwordChecker.GetPasswordOccurence("password");
     </script>
 </html>

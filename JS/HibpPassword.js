@@ -4,22 +4,27 @@ HIBP.HibpPassword= function(callBack) {
     this.url = "https://api.pwnedpasswords.com/range/";
     this.CheckCallback = callBack;
     this.ComputeHash = HIBP.HashPassword;
-    this.QueyrAPICallback = function(hash,hashSplit,queryResult){
+    this.QueryAPICallback = function(hash,hashSplit,queryResult){
 
         let occurrences = this.CountOccurences(queryResult,hashSplit);
         this.CheckCallback(hash,password,occurrences);
-    };
-
-    this.QueryAPI = function(hash){
-        let request = new XMLHttpRequest();
-        let hashSplit = SplitHash(hash);
-        //TODO call HaveIBeenPwned API
     };
     this.SplitHash = function(passworHash){
         return {
             prefix : passworHash.substring(0,5),
             suffix : passworHash.substring(5)
         };
+    };
+    this.QueryAPI = function(hash,password,thisArg){
+        let hashSplit = thisArg.SplitHash(hash);
+        let request = new XMLHttpRequest();
+        
+        request.onreadystatechange = function() { 
+            if (request.readyState == 4 && request.status == 200)
+                thisArg.QueryAPICallback(hash,hashSplit,request.responseText.split("\r\n")).bind(thisArg);
+        };
+        request.open("GET", thisArg.url+hashSplit.prefix, true); 
+        request.send(null);
     };
     this.CountOccurences = function(apiResult,hashSplit){
         for(let i = 0; i < apiResult.length; i++){
@@ -33,18 +38,18 @@ HIBP.HibpPassword= function(callBack) {
         return 0;
     };
     this.GetPasswordOccurence = function(password){
-        this.ComputeHash(password,this.QueryAPI);
+        this.ComputeHash(password,this.QueryAPI,this);
     };
 };
 
-HIBP.HashPassword = function(password, callBack){
+HIBP.HashPassword = function(password, callBack, thisArg){
     // We transform the string into an arraybuffer.
     var buffer = new TextEncoder("utf-8").encode(password);
     return crypto.subtle.digest("SHA-1", buffer).then(function (hash) {
         return HIBP.hex(hash);
     }).then(function(hex)
     {
-        callBack(hex,password);
+        callBack(hex,password,thisArg);
     });
 };
 
