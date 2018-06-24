@@ -3,7 +3,6 @@ var HIBP = HIBP || {};
 HIBP.HibpPassword= function(callBack) {
     this.url = "https://api.pwnedpasswords.com/range/";
     this.CheckCallback = callBack;
-    this.RateExceededCallback = function(){};
     this.ComputeHash = HIBP.HashPassword;
     this.QueryAPICallback = function(hash,hashSplit,apiResult){
 
@@ -21,12 +20,8 @@ HIBP.HibpPassword= function(callBack) {
         let request = new XMLHttpRequest();
         
         request.onreadystatechange = function() { 
-            if (request.readyState == 4)
-            if(request.status == 200){
+            if(request.readyState == 4 && request.status == 200){
                 thisArg.QueryAPICallback(hash,hashSplit,request.responseText.split("\r\n"));
-            } else if(request.status == 429)
-            {
-                thisArg.RateExceededCallback(hash,password,hashSplit,thisArg);
             }
         };
         request.open("GET", thisArg.url+hashSplit.prefix, true); 

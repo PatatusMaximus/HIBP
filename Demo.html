@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta charset="utf-8" />
+        <title>Have I Been Pwned Javascript integration demo</title>
+    </head>
+    <body>
+        <h1>This is a simple demo page for HibpPassword.js</h1>
+        <div>HibpPassword.js uses Troy Hunt's <b>Have I been pwned</b> password search by range API <a href="https://haveibeenpwned.com/API/v2#SearchingPwnedPasswordsByRange">https://haveibeenpwned.com/API/v2#SearchingPwnedPasswordsByRange</a></div>
+        <div>By default HibpPassword.js uses <a href="https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest">SubtleCrypto.digest()</a> to generate a hash wich requires a modern browser.</div>
+        <br/>
+        <hr/>
+        <form id="passForm" action="#">
+            <input type="password" placeholder="password" id="password" />
+            <input type="submit" value="Check" id="submitPass"/>
+        </form>
+        <div id="result"></div>
+    </body>
+    <script type="text/javascript" src="JS/HibpPassword.js" ></script>
+    <script>
+
+        let passwordInput = document.getElementById("password");
+        let resultTarget = document.getElementById("result");
+        let submitInput = document.getElementById("submitPass");
+
+        //intialize a password checker.
+        //for each check we just display how many times the password has been found
+        let passwordChecker = new HIBP.HibpPassword((hash,count)=>{
+            resultTarget.innerHTML = `You password have been foun <b>${count}</b> times in HIBP database.`;
+        });
+
+        document.getElementById("passForm").addEventListener("submit", function(e){
+            
+            e.preventDefault();    //stop form from submitting
+            let password = passwordInput.value;
+
+            if(typeof password !== 'undefined' && password != ''){
+                passwordChecker.GetPasswordOccurences(password);
+            }
+        });
+    </script>
+</html>
