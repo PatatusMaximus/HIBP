@@ -9,17 +9,13 @@
         <div id="result"></div>
     </body>
     <script type="text/javascript" src="../JS/HibpPassword.js" ></script>
+    <script type="text/javascript" src="ResultDisplay.js" ></script>
     <script>
-        var target = document.getElementById("result");
         let passwordChecker = new HIBP.HibpPassword((hash,pass)=>{
-            let div = document.createElement("div");
-            target.appendChild(div);
-            div.innerHTML = pass + ' -> ' + hash;
-
+            DisplayValue(pass + ' -> ' + hash);
+            
             let isOk = hash === '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8' ? "OK" : "FAIL";
-            div = document.createElement("div");
-            target.appendChild(div);
-            div.innerHTML = isOk;
+            DisplayValue(isOk);
         });
         let result = passwordChecker.GetHash("password");
     </script>
