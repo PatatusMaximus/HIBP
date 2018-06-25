@@ -18,10 +18,11 @@ HIBP.HibpPassword= function(callBack) {
         let hashSplit = this.SplitHash(hash);
         let request = new XMLHttpRequest();
         
+		let self = this;
         
-        request.onreadystatechange = ()=> { 
+        request.onreadystatechange = function() { 
             if(request.readyState == 4 && request.status == 200){
-                this.QueryAPICallback(hash,hashSplit,request.responseText.split("\r\n"));
+                self.QueryAPICallback(hash,hashSplit,request.responseText.split("\r\n"));
             }
         };
         request.open("GET", this.url+hashSplit.prefix, true); 

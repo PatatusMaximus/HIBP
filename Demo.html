@@ -17,6 +17,7 @@
         </form>
         <div id="result"></div>
     </body>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script type="text/javascript" src="JS/HibpPassword.js" ></script>
     <script>
 
@@ -26,18 +27,18 @@
 
         //intialize a password checker.
         //for each check we just display how many times the password has been found
-        let passwordChecker = new HIBP.HibpPassword((hash,count)=>{
-            resultTarget.innerHTML = `Your password has been found <b>${count}</b> times in HIBP database.`;
+        let passwordChecker = new HIBP.HibpPassword(function(hash,count){
+            resultTarget.innerHTML = 'Your password has been found <b>'+count+'</b> times in HIBP database.';
         });
-
-        document.getElementById("passForm").addEventListener("submit", function(e){
-            
-            e.preventDefault();    //stop form from submitting
-            let password = passwordInput.value;
+		
+		$("#passForm").submit(function(){
+			let password = passwordInput.value;
 
             if(typeof password !== 'undefined' && password != ''){
                 passwordChecker.GetPasswordOccurences(password);
             }
-        });
+			
+			return false;
+		});
     </script>
 </html>
